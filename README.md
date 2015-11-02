@@ -1,1 +1,1 @@
-# kommunication-specification
+See communication.md.
