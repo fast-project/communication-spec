@@ -1,0 +1,1 @@
+# kommunication-specification
