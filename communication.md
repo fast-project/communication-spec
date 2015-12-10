@@ -178,21 +178,23 @@ eine oder mehrere VMs zu starten.
 Diskussion: VM vorbereiten in Scheduler Skripten oder von Migfra?
 * topic: fast/migfra/<hostname>/task
 * Payload
-  ```
-  host: <string>
-  task: start vm
-  id: <uuid> //J: <- was ist das?
-  vm-configurations:
-    - name: <string>
-      xml: <Pfad zu XML>
-      overlay-image: <Pfad zum neuen Overlay-Image>
-      base-image: <Pfad zu Basisimage>
-    - name: <string>
-      xml: <Pfad zu XML>
-      overlay-image: <Pfad zum neuen Overlay-Image>
-      base-image: <Pfad zu Basisimage>
-    - ..
-  ```
+
+```
+host: <string>
+task: start vm
+id: <uuid> //J: <- was ist das?
+vm-configurations:
+  - name: <string>
+    xml: <Pfad zu XML>
+    overlay-image: <Pfad zum neuen Overlay-Image>
+    base-image: <Pfad zu Basisimage>
+  - name: <string>
+    xml: <Pfad zu XML>
+    overlay-image: <Pfad zum neuen Overlay-Image>
+    base-image: <Pfad zu Basisimage>
+  - ..
+```
+
 * Erwartetes Verhalten:
   VMs werden auf dem entsprechenden Host gestartet.
 * Antwort: Default result status? Oder doch lieber modifiziert mit eindeutige IDs für die VMs?
@@ -201,15 +203,17 @@ Diskussion: VM vorbereiten in Scheduler Skripten oder von Migfra?
 Annahme: VM wird gestoppt wenn die Anwendung fertig ist / beendet werden soll.
 * topic: fast/migfra/<hostname>/task
 * Payload
-  ```
-  host: <string>
-  task: stop vm
-  id: <uuid>
-  list:
-    - name: <vm name>
-    - name: <vm name>
-    - ..
-  ```
+
+```
+host: <string>
+task: stop vm
+id: <uuid>
+list:
+  - name: <vm name>
+  - name: <vm name>
+  - ..
+```
+
 * Erwartetes Verhalten:
   VM wird gestoppt.
 * Antwort: Default result status
@@ -219,18 +223,19 @@ Diese Nachricht informiert die zuständige Migrationsframework-Instanz darüber,
 dass die Anwendung vom Quellknoten auf den Zielknoten migriert werden soll.
 * topic: fast/migfra/<hostname>/task
 * Payload
-  ```
-  host: <string>
-  task: migrate vm
-  id: <uuid>
-  name: <vm name>
-  destination: <destination hostname>
-  time-measurement: true
-  parameter:
-    retry-counter: <counter>
-    migration-type: live | warm | offline
-    rdma-migration: true | false
-  ```
+
+```
+host: <string>
+task: migrate vm
+id: <uuid>
+name: <vm name>
+destination: <destination hostname>
+time-measurement: true
+parameter:
+  retry-counter: <counter>
+  migration-type: live | warm | offline
+  rdma-migration: true | false
+```
 
 * Erwartetes Verhalten:
   VM wird vom Migrationsframework gestartet und anschließend wird eine
@@ -243,18 +248,20 @@ Nachdem die VM gestartet ist und bereit ist eine Anwendung auszuführen
 informiert die entsprechende Migrationsframework-Instanz den Schduler darüber.
 * topic: fast/migfra/<hostname>/status
 * Payload:
-  ```
-  scheduler: <hostname/global>
-  result: vm started
-  list:
-    - name: <vm-hostname>
-      status: success | error
-      process-id: <process id of the vm>
-    - name: <vm-hostname>
-      status: success | error
-      process-id: <process id of the vm>
-    - ..
-  ```
+
+```
+scheduler: <hostname/global>
+result: vm started
+list:
+  - name: <vm-hostname>
+    status: success | error
+    process-id: <process id of the vm>
+  - name: <vm-hostname>
+    status: success | error
+    process-id: <process id of the vm>
+  - ..
+```
+
 * Erwartetes Verhalten:
   Der für den Knoten zuständige Scheduler empfängt die Nachricht und
   startet die Anwendung in der VM.
@@ -271,15 +278,17 @@ informiert die entsprechende Migrationsframework-Instanz den Schduler darüber.
 Informiert den zuständigen Scheduler, dass die VM gestoppt ist.
 * topic: fast/migfra/<hostname>/status
 * Payload
-  ```
-  result: vm stopped
-  list:
-    - name: <vm-hostname>
-      status: success | error
-    - name: <vm-hostname>
-      status: success | error
-    - ..
-  ```
+
+```
+result: vm stopped
+list:
+  - name: <vm-hostname>
+    status: success | error
+  - name: <vm-hostname>
+    status: success | error
+  - ..
+```
+
 * Erwartetes Verhalten:
   VM aufräumen? Log files für den Nutzer rauskopieren?
 
@@ -287,14 +296,16 @@ Informiert den zuständigen Scheduler, dass die VM gestoppt ist.
 Meldung an den Scheduler dass die Migration fertig ist.
 * topic: fast/migfra/<hostname>/status
 * Payload
-  ```
-  result: vm migrated
-  name: <vm name>
-  status:
-    result: success | error
-    retries: <counter>
-    process-id: <process id of the vm>
-  ```
+
+```
+result: vm migrated
+name: <vm name>
+status:
+  result: success | error
+  retries: <counter>
+  process-id: <process id of the vm>
+```
+
 * Erwartetes Verhalten:
   Scheduler markiert ursprüngliche Ressource als frei.
 
@@ -302,9 +313,11 @@ Meldung an den Scheduler dass die Migration fertig ist.
 Meldung an die pscom-Schicht, dass die Verbindungen abgebaut werden sollen.
 * topic: fast/pscom/<hostname>/<pid>/request
 * Payload
-  ```
-  task: suspend
-  ```
+
+```
+task: suspend
+```
+
 * Erwartetes Verhalten:
   pscom faehr suspend-Protokoll ab
 
@@ -313,9 +326,11 @@ Meldung an die pscom-Schicht, dass die Verbindungen wieder hergestellt werden
 koennen.
 * topic: fast/pscom/<hostname>/<pid>/request
 * Payload
-  ```
-  task: resume
-  ```
+
+```
+task: resume
+```
+
 * Erwartetes Verhalten:
   pscom gibt Verbindungen frei
 
@@ -324,10 +339,12 @@ koennen.
 Knoten wird gestartet. Meldet und meldet sich beim Scheduler an.
 * topic: fast/agent/<hostname>/status
 * payload:
-  ```
-  task: init
-  source: <hostname>
-  ```
+
+```
+task: init
+source: <hostname>
+```
+
 * Erwartetes Verhalten:
   Der für den Knoten zuständige Scheduler empfängt die Nachricht und
   nimmt den Knoten in sein Scheduling mit auf.
@@ -342,15 +359,17 @@ TODO?
 #### Application status
 * topic: fast/application/<slurm_jobid>/status
 * payload:
-  ```
-  task: status
-  source: <slurm_jobid>
-  migration: yes | no
-  supported_KPI :  
-    - memory usage
-    - memory bandwidth
-    - ..
-  ```
+
+```
+task: status
+source: <slurm_jobid>
+migration: yes | no
+supported_KPI :  
+  - memory usage
+  - memory bandwidth
+  - ..
+```
+
 * Erwartetes Verhalten:
   Application is migratable be default.
   However this can be changed by setting 'migration' to 'no' in the status message.
@@ -358,13 +377,15 @@ TODO?
 #### Application KPI
 * topic: fast/application/<slurm_jobid>/KPIs
 * payload:
-  ```
-  task: KPIs
-  source: <slurm_jobid>
-  supported_KPI :  
-      - memory usage : < value >
-      - memory bandwidth : <value>
-      - ..
-  ```
+
+```
+task: KPIs
+source: <slurm_jobid>
+supported_KPI :  
+    - memory usage : < value >
+    - memory bandwidth : <value>
+    - ..
+```
+
 * Erwartetes Verhalten:
   The scheduler should receive the application's KPIs and take them into account. 
