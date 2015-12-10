@@ -141,17 +141,19 @@ YAML Format. Die unterschiedlichen Nachrichten sind nach ihrer Quelle sortiert.
 Der Scheduler meldet sich beim Agenten und liefert eine initiale Konfiguration.
 * topic: fast/agent/<hostname>/task/init_agent
 * Payload
-  ```
-  task: init agent
-  KPI:
-    categories:
-      - energy consumption: <energy>
-      - compute intensity: <high,medium,low>
-      - IO intensity: <high,medium,low>
-      - communication intensity (network): <high,medium,low>
-      - expected runtime: <high,medium,low>
-    repeat: <number in seconds how often the KPIs are reported>
-  ```
+  
+```
+task: init agent
+KPI:
+  categories:
+    - energy consumption: <energy>
+    - compute intensity: <high,medium,low>
+    - IO intensity: <high,medium,low>
+    - communication intensity (network): <high,medium,low>
+    - expected runtime: <high,medium,low>
+  repeat: <number in seconds how often the KPIs are reported>
+```
+
 * Erwartetes Verhalten:
   Der Agent merkt sich die gesendete Konfiguration und reagiert
   entsprechend. Der für den Knoten zuständige Scheduler empfängt die
