@@ -65,8 +65,8 @@ fast
 |   +-- <hostname>
 +-- agent
 |   +-- <hostname>
-|   +-- status
-|   +-- task
+|   |	 +-- status
+|   |	 +-- task
 |   +-- ...
 |   +-- <hostname>
 +-- application
@@ -355,7 +355,31 @@ source: <hostname>
   o.g. Nachricht.
 
 #### Messwerte zurückschicken
-TODO: In welcher Form will der scheduler die?
+Agend resoponds to the configruation proposed by the scheduler.
+* topic: fast/agent/<hostname>/status
+* Payload
+
+```
+task: configuration
+source: <hostname>
+status: accepted|denied
+```
+* Erwartetes Verhalten:
+The agent should send this message to confirm or the deny the configuration proposed by the scheduler.
+
+#### KPIs
+* topic: fast/agent/<hostname>/status
+* Payload
+
+```
+task: KPI
+source: <hostname>
+KPIS:
+    - memory usage : < value >
+    - memory bandwidth : <value>
+    - ..
+```
+ 
 ### Anwendungen
 TODO?
 #### Application status
