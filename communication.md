@@ -5,7 +5,7 @@ Grundlagen
 ----------
 
 ### Annahmen
-* Scheduler kennt die Hostnamen aller knoten.
+* Scheduler kennt die Hostnamen aller Knoten.
 
 
 ### Aufbau einer MQTT Nachricht
@@ -184,21 +184,36 @@ Diskussion: VM vorbereiten in Scheduler Skripten oder von Migfra?
 ```
 host: <string>
 task: start vm
-id: <uuid> //J: <- was ist das?
+id: <uuid>
 vm-configurations:
   - name: <string>
-    xml: <Pfad zu XML>
-    overlay-image: <Pfad zum neuen Overlay-Image>
-    base-image: <Pfad zu Basisimage>
-  - name: <string>
-    xml: <Pfad zu XML>
-    overlay-image: <Pfad zum neuen Overlay-Image>
-    base-image: <Pfad zu Basisimage>
+    memory: <unsigned long (in kiB)>
+    vcpus: <Anzahl>
+  - xml: <Pfad zu XML>
+    pci-ids: 
+      - vendor: <vendor-id>
+        device: <device-id>
+      - ..
   - ..
 ```
-
+* id: Wird bei result Nachricht mit zurück geschickt, um die Zugehörigkeit zwischen task/result erfassen zu können.
+* VM kann entweder per "name" gestartet werden oder per "xml"
+* name: Es wird eine schon definierte VM gesucht (virDomainLookupByName)
+* xml: Es wird eine VM anhand des XML-Strings definiert (virDomainDefineXML)
+* overlay-image & base-image sind im XML definiert.
+* memory: Setzt memory und maxmemory. (optional)
+* vcpus: Setzt vcpus und maxvcpus. (optional)
+* pci-ids: Ermöglicht eine Liste von PCI-IDs anzugeben, um je ein PCI-Device mit dieser ID zu attachen.
+  PCI-IDs geben den Geräte-Typ an und können mithilfe von "lspci -nn" leicht herausgefunden werden.
+  Sie bestehen aus vendor und device ID.
+  Bsp.:
+```
+  - vendor: 0x15b3
+    device: 0x1004
+```
 * Erwartetes Verhalten:
   VMs werden auf dem entsprechenden Host gestartet.
+  Es wird gewartet bis die VMs bereit (erreichbar mit ssh) sind bevor result geschickt wird.
 * Antwort: Default result status? Oder doch lieber modifiziert mit eindeutige IDs für die VMs?
 
 #### VM stoppen
@@ -213,9 +228,11 @@ id: <uuid>
 list:
   - name: <vm name>
   - name: <vm name>
+    force: true
   - ..
 ```
-
+* force: Ermöglicht es optional die VM unmittelbar zu beenden (virDomainDestroy statt virDomainShutdown).
+  Ist "false", wenn weggelassen.
 * Erwartetes Verhalten:
   VM wird gestoppt.
 * Antwort: Default result status
@@ -237,8 +254,10 @@ parameter:
   retry-counter: <counter>
   migration-type: live | warm | offline
   rdma-migration: true | false
+  pscom-hook-procs: <Anzahl der Prozesse>
 ```
-
+* time-measurement: Gibt Informationen über die Dauer einzelner Phasen im result zurück. (Optional)
+* pscom-hook-procs: Anzahl der Prozesse deren pscom Schicht unterbrochen werden muss. (Optional)
 * Erwartetes Verhalten:
   VM wird vom Migrationsframework gestartet und anschließend wird eine
   entsprechende Statusinformation über den 'scheduler' channel gechickt.
@@ -254,16 +273,18 @@ informiert die entsprechende Migrationsframework-Instanz den Schduler darüber.
 ```
 scheduler: <hostname/global>
 result: vm started
+id: <uuid>
 list:
   - name: <vm-hostname>
     status: success | error
+    details: <string>
     process-id: <process id of the vm>
   - name: <vm-hostname>
     status: success | error
     process-id: <process id of the vm>
   - ..
 ```
-
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben. (optional)
 * Erwartetes Verhalten:
   Der für den Knoten zuständige Scheduler empfängt die Nachricht und
   startet die Anwendung in der VM.
@@ -283,14 +304,17 @@ Informiert den zuständigen Scheduler, dass die VM gestoppt ist.
 
 ```
 result: vm stopped
+id: <uuid>
 list:
   - name: <vm-hostname>
     status: success | error
+    details: <string>
   - name: <vm-hostname>
     status: success | error
   - ..
 ```
 
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben. (optional)
 * Erwartetes Verhalten:
   VM aufräumen? Log files für den Nutzer rauskopieren?
 
@@ -301,13 +325,17 @@ Meldung an den Scheduler dass die Migration fertig ist.
 
 ```
 result: vm migrated
+id: <uuid>
 name: <vm name>
-status:
-  result: success | error
-  retries: <counter>
-  process-id: <process id of the vm>
+status: <success | error>
+details: <retries | error-string>
+process-id: <process id of the vm>
+time-measurement:
+  - <tag>: <duration in sec>
+  - ..
 ```
-
+* details: Ermöglicht detailierte Fehlerinformationen oder bei "success" die Anzahl der Versuche zurückzugeben. (optional)
+* time-measurement: Falls Zeitmessungen im task aktiviert wurden, wird hier eine Liste von Tags mit Zeitdauern zurückgegeben.
 * Erwartetes Verhalten:
   Scheduler markiert ursprüngliche Ressource als frei.
 
