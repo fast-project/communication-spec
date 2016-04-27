@@ -284,7 +284,7 @@ list:
     process-id: <process id of the vm>
   - ..
 ```
-* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben. (optional)
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
 * Erwartetes Verhalten:
   Der für den Knoten zuständige Scheduler empfängt die Nachricht und
   startet die Anwendung in der VM.
@@ -314,7 +314,7 @@ list:
   - ..
 ```
 
-* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben. (optional)
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
 * Erwartetes Verhalten:
   VM aufräumen? Log files für den Nutzer rauskopieren?
 
@@ -334,7 +334,7 @@ time-measurement:
   - <tag>: <duration in sec>
   - ..
 ```
-* details: Ermöglicht detailierte Fehlerinformationen oder bei "success" die Anzahl der Versuche zurückzugeben. (optional)
+* details: Ermöglicht detailierte Fehlerinformationen oder bei "success" die Anzahl der Versuche zurückzugeben.
 * time-measurement: Falls Zeitmessungen im task aktiviert wurden, wird hier eine Liste von Tags mit Zeitdauern zurückgegeben.
 * Erwartetes Verhalten:
   Scheduler markiert ursprüngliche Ressource als frei.
