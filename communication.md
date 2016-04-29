@@ -189,7 +189,7 @@ vm-configurations:
   - name: <string>
     memory: <unsigned long (in kiB)>
     vcpus: <Anzahl>
-  - xml: <Pfad zu XML>
+  - xml: <XML string>
     pci-ids: 
       - vendor: <vendor-id>
         device: <device-id>
