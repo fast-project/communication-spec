@@ -5,7 +5,7 @@ Grundlagen
 ----------
 
 ### Annahmen
-* Scheduler kennt die Hostnamen aller knoten.
+* Scheduler kennt die Hostnamen aller Knoten.
 
 
 ### Aufbau einer MQTT Nachricht
@@ -85,50 +85,50 @@ fast
   * fast/application/+/status
   * fast/application/+/KPIs
 * Migration-Framework
-  * fast/migfra/<hostname>/task
+  * fast/migfra/\<hostname\>/task
     Entgegennehmen von Anfragen des Schedulers
-  * fast/pscom/<hostname>/<procID>/response
+  * fast/pscom/\<hostname\>/\<procID\>/response
     Antwort vom entsprechenden Prozess, dass alle Verbindungen herunter gefahren wurden
 * Agent
-  * fast/migfra/<hostname>/result
+  * fast/migfra/\<hostname\>/result
     Aenderungen im Schedule des betreffenden nodes (z.B. neuer Job)
-  * fast/agent/<hostname>/task
+  * fast/agent/\<hostname\>/task
     Anfragen des Schedulers an den entsprechenden Agenten (z.B. start/stop
     monitoring)
 * pscom
-  * fast/pscom/<hostname>/<procID>/request
+  * fast/pscom/\<hostname\>/\<procID\>/request
     Entgegennehmen von Anfragen des Migrationsframeworks
 * Anwendungen
   //J: Von mir, aber noch nicht ganz klar ob das so passt
-  * fast/migfra/<hostname>/task
+  * fast/migfra/\<hostname\>/task
     Überwacht um mögliche Migration festzustellen <- so aber keine Möglichkeit einzugreifen
-  * fast/application/<hostname>/<pid>/task <- <pid> nicht über VMs hinweg identisch / <hostname>=VM name?
+  * fast/application/\<hostname\>/\<pid\>/task <- \<pid\> nicht über VMs hinweg identisch / \<hostname\>=VM name?
     Entgegennehmen der Anfragen des Agenten / Schedulers / MigFra
 
 ### Publisher
 * Scheduler
-  * fast/migfra/<hostname>/task
+  * fast/migfra/\<hostname\>/task
     Starten, Stoppen und Migrieren von VMs
-  * fast/agent/<hostname>/task
+  * fast/agent/\<hostname\>/task
     starten/stoppen des Monitorings; Konfiguration der KPIs
 * Migration-Framework
-  * fast/migfra/<hostname>/result
+  * fast/migfra/\<hostname\>/result
     VM gestartet/gestoppt/migriert
-  * fast/pscom/<hostname>/<procID>/request
+  * fast/pscom/\<hostname\>/\<procID\>/request
     Herunterfahren von pscom Verbindungen
 * Agent
-  * fast/agent/<hostname>/status
+  * fast/agent/\<hostname\>/status
     Anmeldung des Agenten beim Scheduler
 * pscom
-  * fast/pscom/<hostname>/<procID>/response
+  * fast/pscom/\<hostname\>/\<procID\>/response
     Information an Migrationsframework, dass Verbindungen herunter gefahren wurden
 * Anwendungen
   //J: Von mir, aber noch nicht ganz klar ob das so passt
-  //* fast/application/<hostname>/<pid>/status <- <pid> nicht über VMs hinweg identisch / <hostname>=VM name?
+  //* fast/application/\<hostname\>/\<pid\>/status <- \<pid\> nicht über VMs hinweg identisch / \<hostname\>=VM name?
 
-  * fast/applicaiton/<slurm_jobid>/status
+  * fast/applicaiton/\<slurm_jobid\>/status
     Status Informationen der Anwendung
-  * fast/application/<slurm_jobid>/KPIs
+  * fast/application/\<slurm_jobid\>/KPIs
 
 Nachrichtenformat
 -----------------
@@ -139,7 +139,7 @@ YAML Format. Die unterschiedlichen Nachrichten sind nach ihrer Quelle sortiert.
 ### Scheduler
 #### Agenten Initialisieren
 Der Scheduler meldet sich beim Agenten und liefert eine initiale Konfiguration.
-* topic: fast/agent/<hostname>/task/init_agent
+* topic: fast/agent/\<hostname\>/task/init_agent
 * Payload
   
 ```
@@ -162,7 +162,7 @@ KPI:
 
 #### Monitoring/Tuning beenden
 Der Agent soll aufhören die Anwendung zu überwachen.
-* topic: fast/agent/<hostname>/task/stop_monitoring
+* topic: fast/agent/\<hostname\>/task/stop_monitoring
 * Payload
   ```
   task: stop monitoring
@@ -178,32 +178,47 @@ Der Agent soll aufhören die Anwendung zu überwachen.
 Anfrage des Schedulers an die entsprechende Migrationsframework-Instanz
 eine oder mehrere VMs zu starten.
 Diskussion: VM vorbereiten in Scheduler Skripten oder von Migfra?
-* topic: fast/migfra/<hostname>/task
+* topic: fast/migfra/\<hostname\>/task
 * Payload
 
 ```
 host: <string>
 task: start vm
-id: <uuid> //J: <- was ist das?
+id: <uuid>
 vm-configurations:
   - name: <string>
-    xml: <Pfad zu XML>
-    overlay-image: <Pfad zum neuen Overlay-Image>
-    base-image: <Pfad zu Basisimage>
-  - name: <string>
-    xml: <Pfad zu XML>
-    overlay-image: <Pfad zum neuen Overlay-Image>
-    base-image: <Pfad zu Basisimage>
+    memory: <unsigned long (in kiB)>
+    vcpus: <Anzahl>
+  - xml: <Pfad zu XML>
+    pci-ids: 
+      - vendor: <vendor-id>
+        device: <device-id>
+      - ..
   - ..
 ```
-
+* id: Wird bei result Nachricht mit zurück geschickt, um die Zugehörigkeit zwischen task/result erfassen zu können.
+* VM kann entweder per "name" gestartet werden oder per "xml"
+* name: Es wird eine schon definierte VM gesucht (virDomainLookupByName)
+* xml: Es wird eine VM anhand des XML-Strings definiert (virDomainDefineXML)
+* overlay-image & base-image sind im XML definiert.
+* memory: Setzt memory und maxmemory. (optional)
+* vcpus: Setzt vcpus und maxvcpus. (optional)
+* pci-ids: Ermöglicht eine Liste von PCI-IDs anzugeben, um je ein PCI-Device mit dieser ID zu attachen.
+  PCI-IDs geben den Geräte-Typ an und können mithilfe von "lspci -nn" leicht herausgefunden werden.
+  Sie bestehen aus vendor und device ID.
+  Bsp.:
+```
+  - vendor: 0x15b3
+    device: 0x1004
+```
 * Erwartetes Verhalten:
   VMs werden auf dem entsprechenden Host gestartet.
+  Es wird gewartet bis die VMs bereit (erreichbar mit ssh) sind bevor result geschickt wird.
 * Antwort: Default result status? Oder doch lieber modifiziert mit eindeutige IDs für die VMs?
 
 #### VM stoppen
 Annahme: VM wird gestoppt wenn die Anwendung fertig ist / beendet werden soll.
-* topic: fast/migfra/<hostname>/task
+* topic: fast/migfra/\<hostname\>/task
 * Payload
 
 ```
@@ -213,9 +228,11 @@ id: <uuid>
 list:
   - name: <vm name>
   - name: <vm name>
+    force: true
   - ..
 ```
-
+* force: Ermöglicht es optional die VM unmittelbar zu beenden (virDomainDestroy statt virDomainShutdown).
+  Ist "false", wenn weggelassen.
 * Erwartetes Verhalten:
   VM wird gestoppt.
 * Antwort: Default result status
@@ -223,7 +240,7 @@ list:
 #### Migration starten
 Diese Nachricht informiert die zuständige Migrationsframework-Instanz darüber,
 dass die Anwendung vom Quellknoten auf den Zielknoten migriert werden soll.
-* topic: fast/migfra/<hostname>/task
+* topic: fast/migfra/\<hostname\>/task
 * Payload
 
 ```
@@ -237,8 +254,10 @@ parameter:
   retry-counter: <counter>
   migration-type: live | warm | offline
   rdma-migration: true | false
+  pscom-hook-procs: <Anzahl der Prozesse>
 ```
-
+* time-measurement: Gibt Informationen über die Dauer einzelner Phasen im result zurück. (Optional)
+* pscom-hook-procs: Anzahl der Prozesse deren pscom Schicht unterbrochen werden muss. (Optional)
 * Erwartetes Verhalten:
   VM wird vom Migrationsframework gestartet und anschließend wird eine
   entsprechende Statusinformation über den 'scheduler' channel gechickt.
@@ -248,22 +267,24 @@ parameter:
 #### VM gestartet
 Nachdem die VM gestartet ist und bereit ist eine Anwendung auszuführen
 informiert die entsprechende Migrationsframework-Instanz den Schduler darüber.
-* topic: fast/migfra/<hostname>/status
+* topic: fast/migfra/\<hostname\>/status
 * Payload:
 
 ```
 scheduler: <hostname/global>
 result: vm started
+id: <uuid>
 list:
   - name: <vm-hostname>
     status: success | error
+    details: <string>
     process-id: <process id of the vm>
   - name: <vm-hostname>
     status: success | error
     process-id: <process id of the vm>
   - ..
 ```
-
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
 * Erwartetes Verhalten:
   Der für den Knoten zuständige Scheduler empfängt die Nachricht und
   startet die Anwendung in der VM.
@@ -278,42 +299,49 @@ list:
 
 #### VM gestoppt
 Informiert den zuständigen Scheduler, dass die VM gestoppt ist.
-* topic: fast/migfra/<hostname>/status
+* topic: fast/migfra/\<hostname\>/status
 * Payload
 
 ```
 result: vm stopped
+id: <uuid>
 list:
   - name: <vm-hostname>
     status: success | error
+    details: <string>
   - name: <vm-hostname>
     status: success | error
   - ..
 ```
 
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
 * Erwartetes Verhalten:
   VM aufräumen? Log files für den Nutzer rauskopieren?
 
 #### Migration abgeschlossen
 Meldung an den Scheduler dass die Migration fertig ist.
-* topic: fast/migfra/<hostname>/status
+* topic: fast/migfra/\<hostname\>/status
 * Payload
 
 ```
 result: vm migrated
+id: <uuid>
 name: <vm name>
-status:
-  result: success | error
-  retries: <counter>
-  process-id: <process id of the vm>
+status: <success | error>
+details: <retries | error-string>
+process-id: <process id of the vm>
+time-measurement:
+  - <tag>: <duration in sec>
+  - ..
 ```
-
+* details: Ermöglicht detailierte Fehlerinformationen oder bei "success" die Anzahl der Versuche zurückzugeben.
+* time-measurement: Falls Zeitmessungen im task aktiviert wurden, wird hier eine Liste von Tags mit Zeitdauern zurückgegeben.
 * Erwartetes Verhalten:
   Scheduler markiert ursprüngliche Ressource als frei.
 
 #### Verbindungen abbauen
 Meldung an die pscom-Schicht, dass die Verbindungen abgebaut werden sollen.
-* topic: fast/pscom/<hostname>/<pid>/request
+* topic: fast/pscom/\<hostname\>/\<pid\>/request
 * Payload
 
 ```
@@ -326,7 +354,7 @@ task: suspend
 #### Verbindungen aufbauen
 Meldung an die pscom-Schicht, dass die Verbindungen wieder hergestellt werden
 koennen.
-* topic: fast/pscom/<hostname>/<pid>/request
+* topic: fast/pscom/\<hostname\>/\<pid\>/request
 * Payload
 
 ```
@@ -339,7 +367,7 @@ task: resume
 ### Agent
 #### Agenten anmelden
 Knoten wird gestartet. Meldet und meldet sich beim Scheduler an.
-* topic: fast/agent/<hostname>/status
+* topic: fast/agent/\<hostname\>/status
 * payload:
 
 ```
@@ -383,7 +411,7 @@ KPIS:
 ### Anwendungen
 TODO?
 #### Application status
-* topic: fast/application/<slurm_jobid>/status
+* topic: fast/application/\<slurm_jobid\>/status
 * payload:
 
 ```
@@ -401,7 +429,7 @@ supported_KPI :
   However this can be changed by setting 'migration' to 'no' in the status message.
   Also application at start up can declare the list of KPIs that it is welling to provide.
 #### Application KPI
-* topic: fast/application/<slurm_jobid>/KPIs
+* topic: fast/application/\<slurm_jobid\>/KPIs
 * payload:
 
 ```
