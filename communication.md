@@ -190,10 +190,8 @@ vm-configurations:
     memory: <unsigned long (in kiB)>
     vcpus: <Anzahl>
   - xml: <XML string>
-    pci-ids: 
-      - vendor: <vendor-id>
-        device: <device-id>
-      - ..
+    pci-ids-vendor: <vendor-id>
+    pci-ids-device: <device-id>
   - ..
 ```
 * id: Wird bei result Nachricht mit zurück geschickt, um die Zugehörigkeit zwischen task/result erfassen zu können.
