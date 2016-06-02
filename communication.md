@@ -141,7 +141,7 @@ YAML Format. Die unterschiedlichen Nachrichten sind nach ihrer Quelle sortiert.
 Der Scheduler meldet sich beim Agenten und liefert eine initiale Konfiguration.
 * topic: fast/agent/\<hostname\>/task/init_agent
 * Payload
-  
+
 ```
 task: init agent
 KPI:
@@ -190,7 +190,7 @@ vm-configurations:
     memory: <unsigned long (in kiB)>
     vcpus: <Anzahl>
   - xml: <XML string>
-    pci-ids: 
+    pci-ids:
       - vendor: <vendor-id>
         device: <device-id>
       - ..
@@ -407,7 +407,39 @@ KPIS:
     - memory bandwidth : <value>
     - ..
 ```
- 
+
+### MMBWMON (Agent zur Speicherbandbreitemessung)
+#### Anfrage Main Memory Bandwidth
+Anfrage an den Agenten eine Speicher Bandbreitenmessung anzustoßen.
+* topic: fast/agent/\<hostname\>/mmbwmon/request
+* payload:
+
+```
+task: mmbwmon request
+cores: <list of CPU cores>
+```
+
+* Aktuelles Verhalten von MMBWMON:
+  Die verfügbare Speicherbandbreite für die unter 'cores' angegebenen CPU Kernen wird gemessen und anschließend
+  zurückgesendet (siehe nächsten Punkt). VMs/Prozesse die u.U. auf den CPU Kernen laufen müssen vorher angehalten werden.
+
+#### Rückmeldung Main Memory Bandwidth
+Antwort des Agentens mit der aktuell verfügbaren Speicherbandbreite auf den gemessenen Kernen.
+* topic: fast/agent/\<hostname\>/mmbwmon/reply
+* payload:
+
+```
+task: mmbwmon reply
+cores: <list of cores>
+reply: <value between 0.33 and 1>
+```
+
+* Aktuelles Verhalten von MMBWMON:
+  Die verfügbare Speicherbandbreite für die unter 'cores' angegebenen CPU Kernen wird zurückgeliefert.
+  1    == CPU Kerne erhalten aktuell maximale Speicherbandbreite
+  0.33 == CPU Kerne erreichen nur 33% der theoretisch verfügbaren Bandbreite. Minimalwert.
+
+
 ### Anwendungen
 TODO?
 #### Application status
@@ -442,4 +474,4 @@ supported_KPI :
 ```
 
 * Erwartetes Verhalten:
-  The scheduler should receive the application's KPIs and take them into account. 
+  The scheduler should receive the application's KPIs and take them into account.
