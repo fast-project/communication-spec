@@ -146,9 +146,12 @@ Der Scheduler meldet sich beim Agenten und liefert eine initiale Konfiguration.
 task: init agent
 KPI:
   categories:
-    - energy consumption: <energy>
-    - compute intensity: <high,medium,low>
-    - IO intensity: <high,medium,low>
+    - Application/VM memory usage : < value >
+    - Application/VM Cpu usage: <value>   //(100  is all cores used):  
+    - Node memory usage : < value >
+    - Node memory bandwidth : <value>
+    - Node Cpu usage: <value>   //(100  is all cores used):  
+    - Node Network Interconnect bandwidth:  <value>
     - communication intensity (network): <high,medium,low>
     - expected runtime: <high,medium,low>
   repeat: <number in seconds how often the KPIs are reported>
@@ -404,16 +407,11 @@ task: KPI
 source: <hostname>
 KPIS:
   - Application/VM memory usage : < value >
-  - Application/VM memory bandwidth : <value>
   - Application/VM Cpu usage: <value>   //(100  is all cores used):  
-  - Application/VM Network Interconnect bandwidth:  <value>
-  - Application/VM Disk bandwidth:  <value>
   - Node memory usage : < value >
   - Node memory bandwidth : <value>
   - Node Cpu usage: <value>   //(100  is all cores used):  
   - Node Network Interconnect bandwidth:  <value>
-  - Node Disk bandwidth:  <value>   
-  - ... any_extra:  <value>   
 ```
  
 ### Anwendungen
