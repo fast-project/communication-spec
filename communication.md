@@ -403,11 +403,11 @@ The agent should send this message to confirm or the deny the configuration prop
 task: KPI
 source: <hostname>
 KPIS:
-  - Application/WM memory usage : < value >
-  - Application/WM memory bandwidth : <value>
-  - Application/WM Cpu usage: <value>   //(100  is all cores used):  
-  - Application/WM Network Interconnect bandwidth:  <value>
-  - Application/WM Disk bandwidth:  <value>
+  - Application/VM memory usage : < value >
+  - Application/VM memory bandwidth : <value>
+  - Application/VM Cpu usage: <value>   //(100  is all cores used):  
+  - Application/VM Network Interconnect bandwidth:  <value>
+  - Application/VM Disk bandwidth:  <value>
   - Node memory usage : < value >
   - Node memory bandwidth : <value>
   - Node Cpu usage: <value>   //(100  is all cores used):  
