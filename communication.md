@@ -67,7 +67,7 @@ fast
 |   +-- <hostname>
 |   |    +-- mmbwmon
 |   |    |   +-- request
-|   |    |   +-- reply
+|   |    |   +-- response
 |   |	 +-- status
 |   |	 +-- task
 |   +-- ...
@@ -428,13 +428,13 @@ cores: <list of CPU cores>
 
 #### Rückmeldung Main Memory Bandwidth
 Antwort des Agentens mit der aktuell verfügbaren Speicherbandbreite auf den gemessenen Kernen.
-* topic: fast/agent/\<hostname\>/mmbwmon/reply
+* topic: fast/agent/\<hostname\>/mmbwmon/response
 * payload:
 
 ```
-task: mmbwmon reply
+task: mmbwmon response
 cores: <list of cores>
-reply: <value between 0.33 and 1>
+response: <value between 0.33 and 1>
 ```
 
 * Aktuelles Verhalten von MMBWMON:
