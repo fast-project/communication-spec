@@ -403,9 +403,17 @@ The agent should send this message to confirm or the deny the configuration prop
 task: KPI
 source: <hostname>
 KPIS:
-    - memory usage : < value >
-    - memory bandwidth : <value>
-    - ..
+  - Application/WM memory usage : < value >
+  - Application/WM memory bandwidth : <value>
+  - Application/WM Cpu usage: <value>   //(100  is all cores used):  
+  - Application/WM Network Interconnect bandwidth:  <value>
+  - Application/WM Disk bandwidth:  <value>
+  - Node memory usage : < value >
+  - Node memory bandwidth : <value>
+  - Node Cpu usage: <value>   //(100  is all cores used):  
+  - Node Network Interconnect bandwidth:  <value>
+  - Node Disk bandwidth:  <value>   
+  - ... any_extra:  <value>   
 ```
  
 ### Anwendungen
