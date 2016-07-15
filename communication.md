@@ -150,10 +150,10 @@ task: init agent
 KPI:
   categories:
     - Application/VM memory usage : < value >
-    - Application/VM Cpu usage: <value>   //(100  is all cores used):  
+    - Application/VM Cpu usage: <value>   //(100  is all cores used):
     - Node memory usage : < value >
     - Node memory bandwidth : <value>
-    - Node Cpu usage: <value>   //(100  is all cores used):  
+    - Node Cpu usage: <value>   //(100  is all cores used):
     - Node Network Interconnect bandwidth:  <value>
     - communication intensity (network): <high,medium,low>
     - expected runtime: <high,medium,low>
@@ -192,7 +192,7 @@ host: <string>
 task: start vm
 id: <uuid>
 vm-configurations:
-  - name: <string>
+  - vm-name: <string>
     memory: <unsigned long (in kiB)>
     vcpus: <Anzahl>
   - xml: <XML string>
@@ -204,7 +204,7 @@ vm-configurations:
 ```
 * id: Wird bei result Nachricht mit zurück geschickt, um die Zugehörigkeit zwischen task/result erfassen zu können.
 * VM kann entweder per "name" gestartet werden oder per "xml"
-* name: Es wird eine schon definierte VM gesucht (virDomainLookupByName)
+* vm-name: Es wird eine schon definierte VM gesucht (virDomainLookupByName)
 * xml: Es wird eine VM anhand des XML-Strings definiert (virDomainDefineXML)
 * overlay-image & base-image sind im XML definiert.
 * memory: Setzt memory und maxmemory. (optional)
@@ -232,8 +232,8 @@ host: <string>
 task: stop vm
 id: <uuid>
 list:
-  - name: <vm name>
-  - name: <vm name>
+  - vm-name: <vm name>
+  - vm-name: <vm name>
     force: true
   - ..
 ```
@@ -253,7 +253,7 @@ dass die Anwendung vom Quellknoten auf den Zielknoten migriert werden soll.
 host: <string>
 task: migrate vm
 id: <uuid>
-name: <vm name>
+vm-name: <vm name>
 destination: <destination hostname>
 time-measurement: true
 parameter:
@@ -281,11 +281,11 @@ scheduler: <hostname/global>
 result: vm started
 id: <uuid>
 list:
-  - name: <vm-hostname>
+  - vm-name: <vm-hostname>
     status: success | error
     details: <string>
     process-id: <process id of the vm>
-  - name: <vm-hostname>
+  - vm-name: <vm-hostname>
     status: success | error
     process-id: <process id of the vm>
   - ..
@@ -312,10 +312,10 @@ Informiert den zuständigen Scheduler, dass die VM gestoppt ist.
 result: vm stopped
 id: <uuid>
 list:
-  - name: <vm-hostname>
+  - vm-name: <vm-hostname>
     status: success | error
     details: <string>
-  - name: <vm-hostname>
+  - vm-name: <vm-hostname>
     status: success | error
   - ..
 ```
@@ -332,7 +332,7 @@ Meldung an den Scheduler dass die Migration fertig ist.
 ```
 result: vm migrated
 id: <uuid>
-name: <vm name>
+vm-name: <vm name>
 status: <success | error>
 details: <retries | error-string>
 process-id: <process id of the vm>
@@ -410,10 +410,10 @@ task: KPI
 source: <hostname>
 KPIS:
   - Application/VM memory usage : < value >
-  - Application/VM Cpu usage: <value>   //(100  is all cores used):  
+  - Application/VM Cpu usage: <value>   //(100  is all cores used):
   - Node memory usage : < value >
   - Node memory bandwidth : <value>
-  - Node Cpu usage: <value>   //(100  is all cores used):  
+  - Node Cpu usage: <value>   //(100  is all cores used):
   - Node Network Interconnect bandwidth:  <value>
 ```
 
@@ -459,7 +459,7 @@ TODO?
 task: status
 source: <slurm_jobid>
 migration: yes | no
-supported_KPI :  
+supported_KPI :
   - memory usage
   - memory bandwidth
   - ..
@@ -476,7 +476,7 @@ supported_KPI :
 ```
 task: KPIs
 source: <slurm_jobid>
-supported_KPI :  
+supported_KPI :
     - memory usage : < value >
     - memory bandwidth : <value>
     - ..
