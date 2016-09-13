@@ -234,11 +234,12 @@ id: <uuid>
 list:
   - vm-name: <vm name>
   - vm-name: <vm name>
-    force: true
+    force: <true/false>
+    undefine: <true/false>
   - ..
 ```
-* force: Ermöglicht es optional die VM unmittelbar zu beenden (virDomainDestroy statt virDomainShutdown).
-  Ist "false", wenn weggelassen.
+* force: Ermöglicht es optional die VM unmittelbar zu beenden (virDomainDestroy statt virDomainShutdown; default:`false`)
+* undefine: Ermöglicht es optional die VM unmittelbar nach dem Herunterfahren aus der Liste der libvirt bekannten VMs herauszunehmen (implizit entspricht dies dem Aufruf `virsh undefine <vm name>`; default: `false`)
 * Erwartetes Verhalten:
   VM wird gestoppt.
 * Antwort: Default result status
