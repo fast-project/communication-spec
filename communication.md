@@ -279,12 +279,16 @@ Ermöglicht die Neuzuordnung von virtuellen CPUs der VM zu den CPUs des Host Sys
 task: repin vm
 id: <uuid>
 vm-name: <string>
-vcpu-map: [<vcpu>:<cpu>, <vcpu>:<cpu>, ...]
+vcpu-map: [[<cpus>], [<cpus>], ...]
 ```
-* vcpu-map enthält die Zuordnung von VCPUs zu CPUs. Diese werden über Zahlen von 0 an identifiziert.
+* vcpu-map enthält die Zuordnung von VCPUs zu CPUs.
+Bsp. Zuordnung von VCPU 0 zu CPUs 4, 1 zu 5, usw.:
+```
+vcpu-map: [[4],[5],[6],[7]]
+```
 Bsp. Zuordnung von VCPUs 0-4 zu CPUs 4-7:
 ```
-vcpu-map: [0:4,1:5,2:6,3:7]
+vcpu-map: [[4,5,6,7],[4,5,6,7],[4,5,6,7],[4,5,6,7]]
 ```
 
 ### Migration-Framework
