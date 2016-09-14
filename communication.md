@@ -274,7 +274,7 @@ parameter:
 #### VM gestartet
 Nachdem die VM gestartet ist und bereit ist eine Anwendung auszuführen
 informiert die entsprechende Migrationsframework-Instanz den Schduler darüber.
-* topic: fast/migfra/\<hostname\>/status
+* topic: fast/migfra/\<hostname\>/result
 * Payload:
 
 ```
@@ -306,7 +306,7 @@ list:
 
 #### VM gestoppt
 Informiert den zuständigen Scheduler, dass die VM gestoppt ist.
-* topic: fast/migfra/\<hostname\>/status
+* topic: fast/migfra/\<hostname\>/result
 * Payload
 
 ```
@@ -327,7 +327,7 @@ list:
 
 #### Migration abgeschlossen
 Meldung an den Scheduler dass die Migration fertig ist.
-* topic: fast/migfra/\<hostname\>/status
+* topic: fast/migfra/\<hostname\>/result
 * Payload
 
 ```
