@@ -270,6 +270,23 @@ parameter:
   entsprechende Statusinformation über den 'scheduler' channel gechickt.
 * Antwort: Default result status
 
+#### Repin
+Ermöglicht die Neuzuordnung von virtuellen CPUs der VM zu den CPUs des Host Systems.
+* topic: fast/migfra/\<hostname\>/task
+* Payload
+
+```
+task: repin vm
+id: <uuid>
+vm-name: <string>
+vcpu-map: [<vcpu>:<cpu>, <vcpu>:<cpu>, ...]
+```
+* vcpu-map enthält die Zuordnung von VCPUs zu CPUs. Diese werden über Zahlen von 0 an identifiziert.
+Bsp. Zuordnung von VCPUs 0-4 zu CPUs 4-7:
+```
+vcpu-map: [0:4,1:5,2:6,3:7]
+```
+
 ### Migration-Framework
 #### VM gestartet
 Nachdem die VM gestartet ist und bereit ist eine Anwendung auszuführen
@@ -345,6 +362,20 @@ time-measurement:
 * time-measurement: Falls Zeitmessungen im task aktiviert wurden, wird hier eine Liste von Tags mit Zeitdauern zurückgegeben.
 * Erwartetes Verhalten:
   Scheduler markiert ursprüngliche Ressource als frei.
+
+#### Repin abgeschlossen
+Meldung an den Scheduler dass das Repinning fertig ist.
+* topic: fast/migfra/\<hostname\>/result
+* Payload
+
+```
+result: vm repinned
+id: <uuid>
+vm-name: <vm name>
+status: <success | error>
+details: <error-string>
+```
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
 
 #### Verbindungen abbauen
 Meldung an die pscom-Schicht, dass die Verbindungen abgebaut werden sollen.
