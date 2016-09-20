@@ -262,13 +262,36 @@ parameter:
   migration-type: live | warm | offline
   rdma-migration: true | false
   pscom-hook-procs: <Anzahl der Prozesse>
+  vcpu-map: [[<cpus>], [<cpus>], ...]
 ```
 * time-measurement: Gibt Informationen über die Dauer einzelner Phasen im result zurück. (Optional)
 * pscom-hook-procs: Anzahl der Prozesse deren pscom Schicht unterbrochen werden muss. (Optional)
+* vcpu-map: Ermöglicht die Neuzuordnung von VCPUs zu CPUs auf dem Zielsystem. Siehe [CPU Repin](#cpu-repin). (Optional)
 * Erwartetes Verhalten:
   VM wird vom Migrationsframework gestartet und anschließend wird eine
   entsprechende Statusinformation über den 'scheduler' channel gechickt.
 * Antwort: Default result status
+
+#### CPU Repin
+Ermöglicht die Neuzuordnung von virtuellen CPUs der VM zu den CPUs des Host Systems.
+* topic: fast/migfra/\<hostname\>/task
+* Payload
+
+```
+task: repin vm
+id: <uuid>
+vm-name: <string>
+vcpu-map: [[<cpus>], [<cpus>], ...]
+```
+* vcpu-map enthält die Zuordnung von VCPUs zu CPUs.
+Bsp. Zuordnung von VCPU 0 zu CPUs 4, 1 zu 5, usw.:
+```
+vcpu-map: [[4],[5],[6],[7]]
+```
+Bsp. Zuordnung von VCPUs 0-4 zu CPUs 4-7:
+```
+vcpu-map: [[4,5,6,7],[4,5,6,7],[4,5,6,7],[4,5,6,7]]
+```
 
 ### Migration-Framework
 #### VM gestartet
@@ -345,6 +368,20 @@ time-measurement:
 * time-measurement: Falls Zeitmessungen im task aktiviert wurden, wird hier eine Liste von Tags mit Zeitdauern zurückgegeben.
 * Erwartetes Verhalten:
   Scheduler markiert ursprüngliche Ressource als frei.
+
+#### CPU Repin abgeschlossen
+Meldung an den Scheduler, dass das Repinning abgeschlossen ist.
+* topic: fast/migfra/\<hostname\>/result
+* Payload
+
+```
+result: vm repinned
+id: <uuid>
+vm-name: <vm name>
+status: <success | error>
+details: <error-string>
+```
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
 
 #### Verbindungen abbauen
 Meldung an die pscom-Schicht, dass die Verbindungen abgebaut werden sollen.
