@@ -262,9 +262,11 @@ parameter:
   migration-type: live | warm | offline
   rdma-migration: true | false
   pscom-hook-procs: <Anzahl der Prozesse>
+  vcpu-map: [[<cpus>], [<cpus>], ...]
 ```
 * time-measurement: Gibt Informationen über die Dauer einzelner Phasen im result zurück. (Optional)
 * pscom-hook-procs: Anzahl der Prozesse deren pscom Schicht unterbrochen werden muss. (Optional)
+* vcpu-map: Ermöglicht die Neuzuordnung von VCPUs zu CPUs auf dem Zielsystem. Siehe [CPU Repin](#cpu-repin). (Optional)
 * Erwartetes Verhalten:
   VM wird vom Migrationsframework gestartet und anschließend wird eine
   entsprechende Statusinformation über den 'scheduler' channel gechickt.
