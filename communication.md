@@ -270,7 +270,7 @@ parameter:
   entsprechende Statusinformation über den 'scheduler' channel gechickt.
 * Antwort: Default result status
 
-#### Repin
+#### CPU Repin
 Ermöglicht die Neuzuordnung von virtuellen CPUs der VM zu den CPUs des Host Systems.
 * topic: fast/migfra/\<hostname\>/task
 * Payload
@@ -367,8 +367,8 @@ time-measurement:
 * Erwartetes Verhalten:
   Scheduler markiert ursprüngliche Ressource als frei.
 
-#### Repin abgeschlossen
-Meldung an den Scheduler dass das Repinning fertig ist.
+#### CPU Repin abgeschlossen
+Meldung an den Scheduler, dass das Repinning abgeschlossen ist.
 * topic: fast/migfra/\<hostname\>/result
 * Payload
 
