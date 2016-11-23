@@ -244,6 +244,42 @@ list:
   VM wird gestoppt.
 * Antwort: Default result status
 
+#### VM anhalten
+Annahme: VM wird angehalten (d.h. der Linux scheduler weißt den VCPUs keine physischen Kerne zu)
+* topic: fast/migfra/\<hostname\>/task
+* Payload
+
+```
+host: <string>
+task: suspend vm
+id: <uuid>
+list:
+  - vm-name: <vm name>
+  - vm-name: <vm name>
+  - ..
+```
+* Erwartetes Verhalten:
+  VM wird angehalten.
+* Antwort: Default result status
+
+#### VM fortsetzen
+Annahme: VM wird fortgesetzt (d.h. die VCPUs werden wieder in das Scheduling aufgenommen)
+* topic: fast/migfra/\<hostname\>/task
+* Payload
+
+```
+host: <string>
+task: resume vm
+id: <uuid>
+list:
+  - vm-name: <vm name>
+  - vm-name: <vm name>
+  - ..
+```
+* Erwartetes Verhalten:
+  VM wird fortgesetzt.
+* Antwort: Default result status
+
 #### Migration starten
 Diese Nachricht informiert die zuständige Migrationsframework-Instanz darüber,
 dass die Anwendung vom Quellknoten auf den Zielknoten migriert werden soll.
@@ -347,6 +383,46 @@ list:
 * details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
 * Erwartetes Verhalten:
   VM aufräumen? Log files für den Nutzer rauskopieren?
+
+#### VM angehalten
+Informiert den zuständigen Scheduler, dass die VM angehalten wurde.
+* topic: fast/migfra/\<hostname\>/result
+* Payload
+
+```
+result: vm suspended
+id: <uuid>
+list:
+  - vm-name: <vm-hostname>
+    status: success | error
+    details: <string>
+  - vm-name: <vm-hostname>
+    status: success | error
+  - ..
+```
+
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
+
+#### VM fortgesetzt
+Informiert den zuständigen Scheduler, dass die VM fortgesetzt wurde.
+* topic: fast/migfra/\<hostname\>/result
+* Payload
+
+```
+result: vm resumed
+id: <uuid>
+list:
+  - vm-name: <vm-hostname>
+    status: success | error
+    details: <string>
+  - vm-name: <vm-hostname>
+    status: success | error
+  - ..
+```
+
+* details: Ermöglicht detailierte Fehlerinformationen zurückzugeben.
+
+
 
 #### Migration abgeschlossen
 Meldung an den Scheduler dass die Migration fertig ist.
