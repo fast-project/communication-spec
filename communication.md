@@ -200,6 +200,7 @@ vm-configurations:
       - vendor: <vendor-id>
         device: <device-id>
       - ..
+    transient: <bool>
   - ..
 ```
 * id: Wird bei result Nachricht mit zurück geschickt, um die Zugehörigkeit zwischen task/result erfassen zu können.
@@ -217,6 +218,7 @@ vm-configurations:
   - vendor: 0x15b3
     device: 0x1004
 ```
+* transient: Ermöglicht ein VM mittels XML als transiente Domain zu starten. Eine transiente Domain ist nur während der Laufzeit definiert und ist nach dem Herunterfahren nicht mehr für Libvirt bekannt. Hier ist die Übergabe des XML notwendig. (optional)
 * Erwartetes Verhalten:
   VMs werden auf dem entsprechenden Host gestartet.
   Es wird gewartet bis die VMs bereit (erreichbar mit ssh) sind bevor result geschickt wird.
