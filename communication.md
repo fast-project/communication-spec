@@ -200,6 +200,7 @@ vm-configurations:
       - vendor: <vendor-id>
         device: <device-id>
       - ..
+    transient: <bool>
   - ..
 ```
 * id: Wird bei result Nachricht mit zurück geschickt, um die Zugehörigkeit zwischen task/result erfassen zu können.
@@ -217,6 +218,7 @@ vm-configurations:
   - vendor: 0x15b3
     device: 0x1004
 ```
+* transient: Ermöglicht ein VM mittels XML als transiente Domain zu starten. Eine transiente Domain ist nur während der Laufzeit definiert und ist nach dem Herunterfahren nicht mehr für Libvirt bekannt. Hier ist die Übergabe des XML notwendig. (optional)
 * Erwartetes Verhalten:
   VMs werden auf dem entsprechenden Host gestartet.
   Es wird gewartet bis die VMs bereit (erreichbar mit ssh) sind bevor result geschickt wird.
@@ -299,10 +301,15 @@ parameter:
   rdma-migration: true | false
   pscom-hook-procs: <Anzahl der Prozesse>
   vcpu-map: [[<cpus>], [<cpus>], ...]
+  swap-with: 
+    vm-name: <vm name>
+    pscom-hook-procs: <Anzahl der Prozesse>
+    vcpu-map: [[<cpus>], [<cpus>], ...]
 ```
 * time-measurement: Gibt Informationen über die Dauer einzelner Phasen im result zurück. (Optional)
 * pscom-hook-procs: Anzahl der Prozesse deren pscom Schicht unterbrochen werden muss. (Optional)
 * vcpu-map: Ermöglicht die Neuzuordnung von VCPUs zu CPUs auf dem Zielsystem. Siehe [CPU Repin](#cpu-repin). (Optional)
+* swap-with: Ermöglicht zwei VMs zu tauschen. Hier kann für die zweite VM ebenfalls optional pscom-hook-procs und vcpu-map angegeben werden. Die VM, welche unter swap-with angegeben wird, muss auf dem "destination"-Host laufen.
 * Erwartetes Verhalten:
   VM wird vom Migrationsframework gestartet und anschließend wird eine
   entsprechende Statusinformation über den 'scheduler' channel gechickt.
